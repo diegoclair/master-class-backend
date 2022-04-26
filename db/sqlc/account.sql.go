@@ -9,6 +9,31 @@ import (
 	"context"
 )
 
+const addAccountbalance = `-- name: AddAccountbalance :one
+UPDATE accounts
+SET balance = balance + $1 -- we use sqlc.arg when we want that the parameter had a different name that from db field name (instead of balance it will be amount)
+WHERE id = $2
+RETURNING id, owner, balance, currency, created_at
+`
+
+type AddAccountbalanceParams struct {
+	Amount int64
+	ID     int64
+}
+
+func (q *Queries) AddAccountbalance(ctx context.Context, arg AddAccountbalanceParams) (Account, error) {
+	row := q.db.QueryRowContext(ctx, addAccountbalance, arg.Amount, arg.ID)
+	var i Account
+	err := row.Scan(
+		&i.ID,
+		&i.Owner,
+		&i.Balance,
+		&i.Currency,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const createAccount = `-- name: CreateAccount :one
 INSERT INTO accounts (
   owner, 
@@ -66,7 +91,28 @@ func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
 	return i, err
 }
 
+const getAccountForUpdate = `-- name: GetAccountForUpdate :one
+SELECT id, owner, balance, currency, created_at FROM accounts 
+WHERE id = $1 LIMIT 1
+FOR NO KEY UPDATE
+`
+
+// FOR UPDATE;  -- this is necessary when we are working with multithread (if some thread started a transaction, it will wait the transaction to finish before do the select and it will get the actual value)
+func (q *Queries) GetAccountForUpdate(ctx context.Context, id int64) (Account, error) {
+	row := q.db.QueryRowContext(ctx, getAccountForUpdate, id)
+	var i Account
+	err := row.Scan(
+		&i.ID,
+		&i.Owner,
+		&i.Balance,
+		&i.Currency,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const listAccounts = `-- name: ListAccounts :many
+
 SELECT id, owner, balance, currency, created_at FROM accounts
 ORDER BY id
 LIMIT $1
@@ -78,6 +124,7 @@ type ListAccountsParams struct {
 	Offset int32
 }
 
+// FOR UPDATE only do not solve our problema because we got deadlock when the account id is used to update the balance, it generates lock, so we tell to database that we won't update the account id (we just use as WHERE condition)
 // paginatiin
 func (q *Queries) ListAccounts(ctx context.Context, arg ListAccountsParams) ([]Account, error) {
 	rows, err := q.db.QueryContext(ctx, listAccounts, arg.Limit, arg.Offset)
@@ -109,7 +156,8 @@ func (q *Queries) ListAccounts(ctx context.Context, arg ListAccountsParams) ([]A
 }
 
 const updateAccount = `-- name: UpdateAccount :one
-UPDATE accounts SET balance = $2
+UPDATE accounts
+SET balance = $2
 WHERE id = $1
 RETURNING id, owner, balance, currency, created_at
 `
