@@ -87,24 +87,35 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 		}
 
 		// update accounts' balance
-		result.FromAccount, err = q.AddAccountbalance(ctx, AddAccountbalanceParams{
-			ID:     arg.FromAccountID,
-			Amount: -arg.Amount,
-		})
-		if err != nil {
-			return err
+		// here, the order matters to avoid deadlock
+		// if a thread open a transaction and update accountID1 and another thread open a transaction and starts updating accountID2 .. when the
+		// first thread try to update accountID2 or second thread try to update AccountID1 it will result a deadlock.
+		// with the order by id, when the first thread open a transaction and start update accountID1, then second thread try to update account1 it'll wait until commit from first thread..
+		if arg.FromAccountID < arg.ToAccountID {
+			result.FromAccount, result.ToAccount, err = addMoney(ctx, q, arg.FromAccountID, -arg.Amount, arg.ToAccountID, arg.Amount)
+		} else {
+			result.ToAccount, result.FromAccount, err = addMoney(ctx, q, arg.ToAccountID, arg.Amount, arg.FromAccountID, -arg.Amount)
 		}
 
-		result.ToAccount, err = q.AddAccountbalance(ctx, AddAccountbalanceParams{
-			ID:     arg.ToAccountID,
-			Amount: arg.Amount,
-		})
-		if err != nil {
-			return err
-		}
-
-		return nil
+		return err
 	})
 
 	return result, err
+}
+
+func addMoney(ctx context.Context, q *Queries, accountID1, amount1, accountID2, amount2 int64) (account1 Account, account2 Account, err error) {
+
+	account1, err = q.AddAccountbalance(ctx, AddAccountbalanceParams{
+		ID:     accountID1,
+		Amount: amount1,
+	})
+	if err != nil {
+		return
+	}
+	account2, err = q.AddAccountbalance(ctx, AddAccountbalanceParams{
+		ID:     accountID2,
+		Amount: amount2,
+	})
+
+	return
 }
