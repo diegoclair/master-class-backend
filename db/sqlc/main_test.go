@@ -6,21 +6,20 @@ import (
 	"os"
 	"testing"
 
+	"github.com/diegoclair/master-class-backend/util"
 	_ "github.com/lib/pq"
 )
 
 var testQueries *Queries
 var testDB *sql.DB
 
-const (
-	dbDriver = "postgres"
-	dbSource = "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable"
-)
-
 func TestMain(m *testing.M) {
-	var err error
+	config, err := util.LoadConfig("../..")
+	if err != nil {
+		log.Fatal("cannot connect to db: ", err)
+	}
 	//to this test pass, we need to import the pq package
-	testDB, err = sql.Open(dbDriver, dbSource)
+	testDB, err = sql.Open(config.DBDriver, config.DBSource)
 	if err != nil {
 		log.Fatal("cannot connect to db: ", err)
 	}
