@@ -22,4 +22,10 @@ test:
 server:
 	go run main.go
 
-.PHONY: postgres createdb dropdb migrateup migratedown sqlc, test, server
+mock:
+# -package = name of package in the generated file;
+# -destination = where the file will be generated and with name
+# Store = interface that we want to generate the mock, we can pass more than one with comma
+	mockgen -package mockdb -destination db/mock/store.go github.com/diegoclair/master-class-backend/db/sqlc Store
+
+.PHONY: postgres createdb dropdb migrateup migratedown sqlc, test, server, mock

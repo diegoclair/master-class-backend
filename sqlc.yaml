@@ -6,3 +6,4 @@ packages:
     schema: "./db/migrations"
     queries: "./db/sqlc/query"
     emit_empty_slices: true # to return empty slice from queries instead of null
+    emit_interface: true 
