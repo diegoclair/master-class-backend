@@ -38,8 +38,12 @@ mock:
 server:
 	go run main.go
 
-sqlc:
-	sqlc generate
+# after we execute sqlc generate it will update the querier interface and so we need to regenerate the mock again
+sqlc: sqlccommand mock
+
+sqlccommand:
+#this command generate code for the queries defined inside of db/query
+	sqlc generate 
 
 test:
 	go test -v -cover ./...

@@ -21,7 +21,7 @@ FOR NO KEY UPDATE; -- FOR UPDATE only do not solve our problema because we got d
 -- name: ListAccounts :many
 SELECT * FROM accounts
 ORDER BY id
--- paginatiin
+-- pagination
 LIMIT $1
 OFFSET $2;
 
