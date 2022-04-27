@@ -4,23 +4,30 @@ postgres:
 createdb:
 	docker exec -it postgres12 createdb --username=root --owner=root simple_bank
 
+createmigration:
+#how to call example: filename=t make createmigration
+#withou @ before if, it logs the entire make command
+	@if [ "$(filename)" = "" ]; then\
+        echo "filename parameter is required";\
+	else \
+		migrate create -ext sql -dir db/migrations -seq "$(filename)";\
+    fi
+
 dropdb: 
 	docker exec -it postgres12 dropdb simple_bank
-
-migrateup: 
-	migrate -path db/migrations -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose up
 
 migratedown: 
 	migrate -path db/migrations -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose down
 
-sqlc:
-	sqlc generate
+migratedownlast: 
+	migrate -path db/migrations -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose down 1
 
-test:
-	go test -v -cover ./...
+migrateup: 
+	migrate -path db/migrations -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose up
 
-server:
-	go run main.go
+migrateuplast: 
+	migrate -path db/migrations -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose up 1
+
 
 mock:
 # -package = name of package in the generated file;
@@ -28,4 +35,13 @@ mock:
 # Store = interface that we want to generate the mock, we can pass more than one with comma
 	mockgen -package mockdb -destination db/mock/store.go github.com/diegoclair/master-class-backend/db/sqlc Store
 
-.PHONY: postgres createdb dropdb migrateup migratedown sqlc, test, server, mock
+server:
+	go run main.go
+
+sqlc:
+	sqlc generate
+
+test:
+	go test -v -cover ./...
+
+.PHONY: postgres createdb createmigration dropdb migratedown migratedownlast migrateup migrateuplast sqlc test server mock 
