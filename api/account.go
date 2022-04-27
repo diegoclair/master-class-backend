@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
 
@@ -8,14 +9,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type CreateAccountRequest struct {
+type createAccountRequest struct {
 	Owner    string `json:"owner" binding:"required"` //gin already perform validation with package go-validator if we define a tag biding
-	Currency string `json:"currency" binding:"required,oneof=USD EUR"`
+	Currency string `json:"currency" binding:"required,currency"`
 }
 
 func (s *Server) createAccount(ctx *gin.Context) {
 
-	var input CreateAccountRequest
+	var input createAccountRequest
 	if err := ctx.ShouldBindJSON(&input); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
@@ -49,7 +50,11 @@ func (s *Server) getAccountByID(ctx *gin.Context) {
 
 	account, err := s.store.GetAccount(ctx, input.ID)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
