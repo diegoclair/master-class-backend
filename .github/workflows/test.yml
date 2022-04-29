@@ -52,5 +52,5 @@ jobs:
       run: make test
     
     env:
-      DB_SOURCE: postgresql://root:secret@postgres12:5432/simple_bank?sslmode=disable
+      DB_SOURCE: postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable
 
