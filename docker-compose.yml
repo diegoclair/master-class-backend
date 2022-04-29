@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  db:
+    container_name: postgres12
+    image: postgres:12-alpine
+    environment:
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_USER=root
+      - POSTGRES_DB=simple_bank
+    networks:
+      - bank-network
+
+  api:
+    container_name: bank_api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    environment:
+      WAIT_HOSTS: db:5432
+      DB_SOURCE: "postgresql://root:secret@db:5432/simple_bank?sslmode=disable"
+    depends_on:
+      - db
+    entrypoint: [ "/app/start.sh"]
+    command: sh -c "/wait && /app/simplebank" # CMD is ignored when this command is here
+    networks:
+      - bank-network
+
+networks:
+  bank-network:
+    driver: bridge

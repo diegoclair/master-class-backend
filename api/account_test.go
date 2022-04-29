@@ -317,7 +317,6 @@ func TestListAccountsAPI(t *testing.T) {
 					Return(accounts, nil)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
-				fmt.Println("BODYY: ", string(recorder.Body.Bytes()))
 				require.Equal(t, http.StatusOK, recorder.Code)
 				requireBodyMatchAccounts(t, recorder.Body, accounts)
 			},
