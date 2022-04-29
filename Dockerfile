@@ -16,7 +16,11 @@ COPY --from=builder /app/simplebank .
 COPY --from=builder /app/migrate ./migrate
 COPY db/migrations ./migrations
 COPY app.env .
+
 COPY start.sh .
+RUN chmod +x ./start.sh
+COPY start-compose.sh .
+RUN chmod +x ./start-compose.sh
 
 ## Add the wait script to the image
 ENV WAIT_VERSION 2.9.0
@@ -24,5 +28,5 @@ ADD https://github.com/ufoscout/docker-compose-wait/releases/download/$WAIT_VERS
 RUN chmod +x /wait
 
 EXPOSE 8000
-CMD [ /wait && /app/simplebank ]
-#ENTRYPOINT [ /app/start.sh ]
+ENTRYPOINT [ "/app/start.sh" ]
+CMD [ "/app/simplebank" ]
