@@ -52,5 +52,5 @@ jobs:
       run: make test
     
     env:
-      DB_SOURCE: postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable
+      DB_SOURCE: postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable # in local, the host is the name of container running locally (postgres12) here we need to use localhost as host of postgres
 
