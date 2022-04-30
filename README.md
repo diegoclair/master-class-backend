@@ -1,186 +1,217 @@
-[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/golang-migrate/migrate/CI/master)](https://github.com/golang-migrate/migrate/actions/workflows/ci.yaml?query=branch%3Amaster)
-[![GoDoc](https://pkg.go.dev/badge/github.com/golang-migrate/migrate)](https://pkg.go.dev/github.com/golang-migrate/migrate/v4)
-[![Coverage Status](https://img.shields.io/coveralls/github/golang-migrate/migrate/master.svg)](https://coveralls.io/github/golang-migrate/migrate?branch=master)
-[![packagecloud.io](https://img.shields.io/badge/deb-packagecloud.io-844fec.svg)](https://packagecloud.io/golang-migrate/migrate?filter=debs)
-[![Docker Pulls](https://img.shields.io/docker/pulls/migrate/migrate.svg)](https://hub.docker.com/r/migrate/migrate/)
-![Supported Go Versions](https://img.shields.io/badge/Go-1.16%2C%201.17-lightgrey.svg)
-[![GitHub Release](https://img.shields.io/github/release/golang-migrate/migrate.svg)](https://github.com/golang-migrate/migrate/releases)
-[![Go Report Card](https://goreportcard.com/badge/github.com/golang-migrate/migrate)](https://goreportcard.com/report/github.com/golang-migrate/migrate)
+# Simple Bank
 
-# migrate
+This repository contains the codes of the [Backend Master Class](https://bit.ly/backendmaster) course by [TECH SCHOOL](https://dev.to/techschoolguru) on Udemy at [this link](https://www.udemy.com/course/backend-master-class-golang-postgresql-kubernetes/?referralCode=DD082CB0A39D22EC43EE). 
+This course can be find on Youtube at [Youtube channel](https://www.youtube.com/c/TECHSCHOOLGURU).
 
-__Database migrations written in Go. Use as [CLI](#cli-usage) or import as [library](#use-in-your-go-project).__
+![Backend master class](backend-master.png)
 
-* Migrate reads migrations from [sources](#migration-sources)
-   and applies them in correct order to a [database](#databases).
-* Drivers are "dumb", migrate glues everything together and makes sure the logic is bulletproof.
-   (Keeps the drivers lightweight, too.)
-* Database drivers don't assume things or try to correct user input. When in doubt, fail.
 
-Forked from [mattes/migrate](https://github.com/mattes/migrate)
+In this course, we learned step-by-step how to design, develop and deploy a backend web service from scratch. I believe the best way to learn programming is to build a real application. Therefore, throughout the course, we learned how to build a backend web service for a simple bank. It provide APIs for the frontend to do the following things:
 
-## Databases
+- Create and manage bank accounts.
+- Record all balance changes to each of the accounts.
+- Perform a money transfer between 2 accounts.
 
-Database drivers run migrations. [Add a new database?](database/driver.go)
+The programming language used to develop the service was Golang, but the course is not just about coding in Go. The course is divided into 3 main parts:
 
-* [PostgreSQL](database/postgres)
-* [PGX](database/pgx)
-* [Redshift](database/redshift)
-* [Ql](database/ql)
-* [Cassandra](database/cassandra)
-* [SQLite](database/sqlite)
-* [SQLite3](database/sqlite3) ([todo #165](https://github.com/mattes/migrate/issues/165))
-* [SQLCipher](database/sqlcipher)
-* [MySQL/ MariaDB](database/mysql)
-* [Neo4j](database/neo4j)
-* [MongoDB](database/mongodb)
-* [CrateDB](database/crate) ([todo #170](https://github.com/mattes/migrate/issues/170))
-* [Shell](database/shell) ([todo #171](https://github.com/mattes/migrate/issues/171))
-* [Google Cloud Spanner](database/spanner)
-* [CockroachDB](database/cockroachdb)
-* [ClickHouse](database/clickhouse)
-* [Firebird](database/firebird)
-* [MS SQL Server](database/sqlserver)
+1. In the first part, we learned deeply about how to design the database, generate codes to talk to the DB in a consistent and reliable way using transactions, understand the DB isolation levels, and how to use it correctly in production. Besides the database, you will also learn how to use docker for local development, how to use Git to manage your codes, and how to use Github Action to run unit tests automatically.
 
-### Database URLs
+2. In the second part, we learned how to build a set of RESTful HTTP APIs using Gin - one of the most popular Golang frameworks for building web services. This includes everything from loading app configs, mocking DB for more robust unit tests, handling errors, authenticating users, and securing the APIs with JWT and PASETO access tokens.
 
-Database connection strings are specified via URLs. The URL format is driver dependent but generally has the form: `dbdriver://username:password@host:port/dbname?param1=true&param2=false`
+3. In the last part, we learned how to build your app with Docker and deploy it to a production Kubernetes cluster on AWS. The lectures are very detailed with a step-by-step guide, from how to build a minimal docker image, set up a free-tier AWS account, create a production database, store and retrieve production secrets, create a Kubernetes cluster with EKS, use Github Action to automatically build and deploy the image to the EKS cluster, buy a domain name and route the traffics to the service, secure the connection with HTTPs and auto-renew TLS certificate from Let's Encrypt.
 
-Any [reserved URL characters](https://en.wikipedia.org/wiki/Percent-encoding#Percent-encoding_reserved_characters) need to be escaped. Note, the `%` character also [needs to be escaped](https://en.wikipedia.org/wiki/Percent-encoding#Percent-encoding_the_percent_character)
+This course is designed with a lot of details, so that everyone, even with very little programming experience can understand and do it by themselves. I strongly believe that after the course, you would be able to work much more confidently and effectively in your projects.
 
-Explicitly, the following characters need to be escaped:
-`!`, `#`, `$`, `%`, `&`, `'`, `(`, `)`, `*`, `+`, `,`, `/`, `:`, `;`, `=`, `?`, `@`, `[`, `]`
+## Course videos on youtube:
 
-It's easiest to always run the URL parts of your DB connection URL (e.g. username, password, etc) through an URL encoder. See the example Python snippets below:
+- Lecture #1: [Design DB schema and generate SQL code with dbdiagram.io](https://www.youtube.com/watch?v=rx6CPDK_5mU&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=1)
+- Lecture #2: [Install & use Docker + Postgres + TablePlus to create DB schema](https://www.youtube.com/watch?v=Q9ipbLeqmQo&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=2)
+- Lecture #3: [How to write & run database migration in Golang](https://www.youtube.com/watch?v=0CYkrGIJkpw&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=3)
+- Lecture #4: [Generate CRUD Golang code from SQL | Compare db/sql, gorm, sqlx & sqlc](https://www.youtube.com/watch?v=prh0hTyI1sU&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=4)
+- Lecture #5: [Write unit tests for database CRUD with random data in Golang](https://www.youtube.com/watch?v=phHDfOHB2PU&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=5)
+- Lecture #6: [A clean way to implement database transaction in Golang](https://www.youtube.com/watch?v=gBh__1eFwVI&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=6)
+- Lecture #7: [DB transaction lock & How to handle deadlock in Golang](https://www.youtube.com/watch?v=G2aggv_3Bbg&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=7)
+- Lecture #8: [How to avoid deadlock in DB transaction? Queries order matters!](https://www.youtube.com/watch?v=qn3-5wdOfoA&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=8)
+- Lecture #9: [Deeply understand transaction isolation levels & read phenomena in MySQL & PostgreSQL](https://www.youtube.com/watch?v=4EajrPgJAk0&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=9)
+- Lecture #10: [Setup Github Actions for Golang + Postgres to run automated tests](https://www.youtube.com/watch?v=3mzQRJY1GVE&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=10)
+- Lecture #11: [Implement RESTful HTTP API in Go using Gin](https://www.youtube.com/watch?v=n_Y_YisgqTw&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=11)
+- Lecture #12: [Load config from file & environment variables in Go with Viper](https://www.youtube.com/watch?v=n5p8HkO6bnE&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=12)
+- Lecture #13: [Mock DB for testing HTTP API in Go and achieve 100% coverage](https://www.youtube.com/watch?v=rL0aeMutoJ0&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=13)
+- Lecture #14: [Implement transfer money API with a custom params validator](https://www.youtube.com/watch?v=5q_wsashJZA&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=14)
+- Lecture #15: [Add users table with unique & foreign key constraints in PostgreSQL](https://www.youtube.com/watch?v=D4VtNC3vQUs&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=15)
+- Lecture #16: [How to handle DB errors in Golang correctly](https://www.youtube.com/watch?v=mJ8b5GcvoxQ&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=16)
+- Lecture #17: [How to securely store passwords? Hash password in Go with Bcrypt!](https://www.youtube.com/watch?v=B3xnJI2lHmc&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=17)
+- Lecture #18: [How to write stronger unit tests with a custom gomock matcher](https://www.youtube.com/watch?v=DuzBE0jKOgE&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=18)
+- Lecture #19: [Why PASETO is better than JWT for token-based authentication?](https://www.youtube.com/watch?v=nBGx-q52KAY&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=19)
+- Lecture #20: [How to create and verify JWT & PASETO token in Golang](https://www.youtube.com/watch?v=Oi4FHDGILuY&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=20)
+- Lecture #21: [Implement login user API that returns PASETO or JWT access token in Go](https://www.youtube.com/watch?v=lnHbZ9GOGAs&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=21)
+- Lecture #22: [Implement authentication middleware and authorization rules in Golang using Gin](https://www.youtube.com/watch?v=Pw8fVBRS4jA&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=22)
+- Lecture #23: [Build a minimal Golang Docker image with a multistage Dockerfile](https://www.youtube.com/watch?v=p1dwLKAxUxA&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=23)
+- Lecture #24: [How to use docker network to connect 2 stand-alone containers](https://www.youtube.com/watch?v=VcFnqQarpjI&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=24)
+- Lecture #25: [How to write docker-compose file and control service start-up orders with wait-for.sh](https://www.youtube.com/watch?v=jf6sQsz0M1M&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=25)
+- Lecture #26: [How to create a free tier AWS account](https://www.youtube.com/watch?v=4UqN1P8pIkM&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=26)
+- Lecture #27: [Auto build & push docker image to AWS ECR with Github Actions](https://www.youtube.com/watch?v=3M4MPmSWt9E&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=27)
+- Lecture #28: [How to create a production DB on AWS RDS](https://www.youtube.com/watch?v=0EaG3T4Q5fQ&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=28)
+- Lecture #29: [Store & retrieve production secrets with AWS secrets manager](https://www.youtube.com/watch?v=3i1mQ_Ye8jE&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=29)
+- Lecture #30: [Kubernetes architecture & How to create an EKS cluster on AWS](https://www.youtube.com/watch?v=TxnCMhYhqRU&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=30)
+- Lecture #31: [How to use kubectl & k9s to connect to a kubernetes cluster on AWS EKS](https://www.youtube.com/watch?v=hwMevai3_wQ&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=31)
+- Lecture #32: [How to deploy a web app to Kubernetes cluster on AWS EKS](https://www.youtube.com/watch?v=PH-Mcd0Rs1w&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=32)
+- Lecture #33: [Register a domain name & set up A-record using Route53](https://www.youtube.com/watch?v=-JF2ukmW3i8&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=33)
+- Lecture #34: [How to use Ingress to route traffics to different services in Kubernetes](https://www.youtube.com/watch?v=lBrqP6FkNsU&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=34)
+- Lecture #35: [Automatic issue TLS certificates in Kubernetes with Let's Encrypt](https://www.youtube.com/watch?v=nU4FTjrgSKI&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=35)
+- Lecture #36: [Automatic deploy to Kubernetes with Github Action](https://www.youtube.com/watch?v=GVY-zze0V_U&list=PLy_6D98if3ULEtXtNSY_2qN21VCKgoQAE&index=36)
 
-```bash
-$ python3 -c 'import urllib.parse; print(urllib.parse.quote(input("String to encode: "), ""))'
-String to encode: FAKEpassword!#$%&'()*+,/:;=?@[]
-FAKEpassword%21%23%24%25%26%27%28%29%2A%2B%2C%2F%3A%3B%3D%3F%40%5B%5D
-$ python2 -c 'import urllib; print urllib.quote(raw_input("String to encode: "), "")'
-String to encode: FAKEpassword!#$%&'()*+,/:;=?@[]
-FAKEpassword%21%23%24%25%26%27%28%29%2A%2B%2C%2F%3A%3B%3D%3F%40%5B%5D
-$
-```
+## Simple bank service
 
-## Migration Sources
+The service that we built is a simple bank. It will provide APIs for the frontend to do following things:
 
-Source drivers read migrations from local or remote sources. [Add a new source?](source/driver.go)
+1. Create and manage bank accounts, which are composed of owner’s name, balance, and currency.
+2. Record all balance changes to each of the account. So every time some money is added to or subtracted from the account, an account entry record will be created.
+3. Perform a money transfer between 2 accounts. This should happen within a transaction, so that either both accounts’ balance are updated successfully or none of them are.
 
-* [Filesystem](source/file) - read from filesystem
-* [Go-Bindata](source/go_bindata) - read from embedded binary data ([jteeuwen/go-bindata](https://github.com/jteeuwen/go-bindata))
-* [GitHub](source/github) - read from remote GitHub repositories
-* [GitHub Enterprise](source/github_ee) - read from remote GitHub Enterprise repositories
-* [Bitbucket](source/bitbucket) - read from remote Bitbucket repositories
-* [Gitlab](source/gitlab) - read from remote Gitlab repositories
-* [AWS S3](source/aws_s3) - read from Amazon Web Services S3
-* [Google Cloud Storage](source/google_cloud_storage) - read from Google Cloud Platform Storage
+## Setup local development
 
-## CLI usage
+### Install tools
 
-* Simple wrapper around this library.
-* Handles ctrl+c (SIGINT) gracefully.
-* No config search paths, no config files, no magic ENV var injections.
+- [Docker desktop](https://www.docker.com/products/docker-desktop)
+- [TablePlus](https://tableplus.com/)
+- [Golang](https://golang.org/)
+- [Homebrew](https://brew.sh/)
+- [Migrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate)
 
-__[CLI Documentation](cmd/migrate)__
+    ```bash
+    brew install golang-migrate
+    ```
 
-### Basic usage
+- [DB Docs](https://dbdocs.io/docs)
 
-```bash
-$ migrate -source file://path/to/migrations -database postgres://localhost:5432/database up 2
-```
+    ```bash
+    npm install -g dbdocs
+    dbdocs login
+    ```
 
-### Docker usage
+- [DBML CLI](https://www.dbml.org/cli/#installation)
 
-```bash
-$ docker run -v {{ migration dir }}:/migrations --network host migrate/migrate
-    -path=/migrations/ -database postgres://localhost:5432/database up 2
-```
+    ```bash
+    npm install -g @dbml/cli
+    dbml2sql --version
+    ```
 
-## Use in your Go project
+- [Sqlc](https://github.com/kyleconroy/sqlc#installation)
 
-* API is stable and frozen for this release (v3 & v4).
-* Uses [Go modules](https://golang.org/cmd/go/#hdr-Modules__module_versions__and_more) to manage dependencies.
-* To help prevent database corruptions, it supports graceful stops via `GracefulStop chan bool`.
-* Bring your own logger.
-* Uses `io.Reader` streams internally for low memory overhead.
-* Thread-safe and no goroutine leaks.
+    ```bash
+    brew install sqlc
+    ```
 
-__[Go Documentation](https://godoc.org/github.com/golang-migrate/migrate)__
+- [Gomock](https://github.com/golang/mock)
 
-```go
-import (
-    "github.com/golang-migrate/migrate/v4"
-    _ "github.com/golang-migrate/migrate/v4/database/postgres"
-    _ "github.com/golang-migrate/migrate/v4/source/github"
-)
+    ``` bash
+    go install github.com/golang/mock/mockgen@v1.6.0
+    ```
 
-func main() {
-    m, err := migrate.New(
-        "github://mattes:personal-access-token@mattes/migrate_test",
-        "postgres://localhost:5432/database?sslmode=enable")
-    m.Steps(2)
-}
-```
+### Setup infrastructure
 
-Want to use an existing database client?
+- Create the bank-network
 
-```go
-import (
-    "database/sql"
-    _ "github.com/lib/pq"
-    "github.com/golang-migrate/migrate/v4"
-    "github.com/golang-migrate/migrate/v4/database/postgres"
-    _ "github.com/golang-migrate/migrate/v4/source/file"
-)
+    ``` bash
+    make network
+    ```
 
-func main() {
-    db, err := sql.Open("postgres", "postgres://localhost:5432/database?sslmode=enable")
-    driver, err := postgres.WithInstance(db, &postgres.Config{})
-    m, err := migrate.NewWithDatabaseInstance(
-        "file:///migrations",
-        "postgres", driver)
-    m.Steps(2)
-}
-```
+- Start postgres container:
 
-## Getting started
+    ```bash
+    make postgres
+    ```
 
-Go to [getting started](GETTING_STARTED.md)
+- Create simple_bank database:
 
-## Tutorials
+    ```bash
+    make createdb
+    ```
 
-* [CockroachDB](database/cockroachdb/TUTORIAL.md)
-* [PostgreSQL](database/postgres/TUTORIAL.md)
+- Run db migration up all versions:
 
-(more tutorials to come)
+    ```bash
+    make migrateup
+    ```
 
-## Migration files
+- Run db migration up 1 version:
 
-Each migration has an up and down migration. [Why?](FAQ.md#why-two-separate-files-up-and-down-for-a-migration)
+    ```bash
+    make migrateup1
+    ```
 
-```bash
-1481574547_create_users_table.up.sql
-1481574547_create_users_table.down.sql
-```
+- Run db migration down all versions:
 
-[Best practices: How to write migrations.](MIGRATIONS.md)
+    ```bash
+    make migratedown
+    ```
 
-## Versions
+- Run db migration down 1 version:
 
-Version | Supported? | Import | Notes
---------|------------|--------|------
-**master** | :white_check_mark: | `import "github.com/golang-migrate/migrate/v4"` | New features and bug fixes arrive here first |
-**v4** | :white_check_mark: | `import "github.com/golang-migrate/migrate/v4"` | Used for stable releases |
-**v3** | :x: | `import "github.com/golang-migrate/migrate"` (with package manager) or `import "gopkg.in/golang-migrate/migrate.v3"` (not recommended) | **DO NOT USE** - No longer supported |
+    ```bash
+    make migratedown1
+    ```
 
-## Development and Contributing
+### Documentation
 
-Yes, please! [`Makefile`](Makefile) is your friend,
-read the [development guide](CONTRIBUTING.md).
+- Generate DB documentation:
 
-Also have a look at the [FAQ](FAQ.md).
+    ```bash
+    make db_docs
+    ```
 
----
+- Access the DB documentation at [this address](https://dbdocs.io/techschool.guru/simple_bank). Password: `secret`
 
-Looking for alternatives? [https://awesome-go.com/#database](https://awesome-go.com/#database).
+### How to generate code
+
+- Generate schema SQL file with DBML:
+
+    ```bash
+    make db_schema
+    ```
+
+- Generate SQL CRUD with sqlc:
+
+    ```bash
+    make sqlc
+    ```
+
+- Generate DB mock with gomock:
+
+    ```bash
+    make mock
+    ```
+
+- Create a new db migration:
+
+    ```bash
+    migrate create -ext sql -dir db/migration -seq <migration_name>
+    ```
+
+### How to run
+
+- Run server:
+
+    ```bash
+    make server
+    ```
+
+- Run test:
+
+    ```bash
+    make test
+    ```
+
+## Deploy to kubernetes cluster
+
+- [Install nginx ingress controller](https://kubernetes.github.io/ingress-nginx/deploy/#aws):
+
+    ```bash
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.48.1/deploy/static/provider/aws/deploy.yaml
+    ```
+
+- [Install cert-manager](https://cert-manager.io/docs/installation/kubernetes/):
+
+    ```bash
+    kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.4.0/cert-manager.yaml
