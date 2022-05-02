@@ -50,4 +50,10 @@ sqlccommand:
 test:
 	go test -v -cover ./...
 
-.PHONY: postgres createdb createmigration dropdb migratedown migratedownlast migrateup migrateuplast sqlc test server mock 
+proto:
+	rm -f pb/*.go
+	protoc --proto_path=proto/protodefs --go_out=proto/pb --go_opt=paths=source_relative \
+    --go-grpc_out=proto/pb --go-grpc_opt=paths=source_relative \
+    proto/protodefs/*.proto
+
+.PHONY: postgres createdb createmigration dropdb migratedown migratedownlast migrateup migrateuplast sqlc test server mock proto
