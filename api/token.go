@@ -31,7 +31,6 @@ func (s *Server) renewAccessToken(ctx *gin.Context) {
 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
-	fmt.Println(refreshPayload.ID)
 
 	session, err := s.store.GetSession(ctx, refreshPayload.ID)
 	if err != nil {
