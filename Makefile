@@ -1,3 +1,5 @@
+DB_URL=postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable
+
 postgres:
 	docker run --name postgres12 --network simple-bank-local -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:12-alpine
 
@@ -17,16 +19,16 @@ dropdb:
 	docker exec -it postgres12 dropdb simple_bank
 
 migratedown: 
-	migrate -path db/migrations -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose down
+	migrate -path db/migrations -database "$(DB_URL)" -verbose down
 
 migratedownlast: 
-	migrate -path db/migrations -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose down 1
+	migrate -path db/migrations -database "$(DB_URL)" -verbose down 1
 
 migrateup: 
-	migrate -path db/migrations -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose up
+	migrate -path db/migrations -database "$(DB_URL)" -verbose up
 
 migrateuplast: 
-	migrate -path db/migrations -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose up 1
+	migrate -path db/migrations -database "$(DB_URL)" -verbose up 1
 
 
 mock:
@@ -48,4 +50,14 @@ sqlccommand:
 test:
 	go test -v -cover ./...
 
-.PHONY: postgres createdb createmigration dropdb migratedown migratedownlast migrateup migrateuplast sqlc test server mock 
+proto:
+	rm -f pb/*.go
+	protoc --proto_path=proto/protodefs --go_out=proto/pb --go_opt=paths=source_relative \
+    --go-grpc_out=proto/pb --go-grpc_opt=paths=source_relative \
+	--grpc-gateway_out=proto/pb --grpc-gateway_opt paths=source_relative \
+    proto/protodefs/*.proto
+
+evans:
+	evans -p 9000 --host localhost -r repl
+
+.PHONY: postgres createdb createmigration dropdb migratedown migratedownlast migrateup migrateuplast sqlc test server mock proto evans

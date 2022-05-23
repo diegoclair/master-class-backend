@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package pb;
+
+//to remove the red line of this import we need to define the proto_path as documentation on vscode-proto3 extension
+/*
+    we add to our vscode settings.json the following lines: (we can add more --proto_path folders)
+     "protoc": {
+        
+        "options": [
+            "--proto_path=proto/protodefs"
+        ]
+    },
+*/
+import "google/api/annotations.proto";
+
+import "user.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/diegoclair/master-class-backend/proto/pb";
+
+message CreateUserRequest {
+    string username = 1;
+    string full_name =2;
+    string email = 3;
+    string password = 4;
+}
+
+message CreateUserResponse {
+    User user = 1;
+}
+
+message LoginUserRequest {
+    string username = 1;
+    string password = 2;
+}
+
+message LoginUserResponse {
+    User user = 1;
+    string session_id = 2;
+    string access_token = 3;
+    google.protobuf.Timestamp access_token_expires_at = 4;
+    string refresh_token = 5;
+    google.protobuf.Timestamp refresh_token_expires_at = 6;
+}
+
+
+service SimpleBank {
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse){
+        option (google.api.http) = {
+                post: "/v1/create_user"
+                body: "*"
+            };
+    }
+    rpc LoginUser(LoginUserRequest) returns (LoginUserResponse){
+        option (google.api.http) = {
+            post: "/v1/login_user"
+            body: "*"
+          };
+    }
+}
