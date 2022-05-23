@@ -8,12 +8,14 @@ require (
 	github.com/go-playground/validator/v10 v10.10.1
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.1.2
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.1
 	github.com/lib/pq v1.10.5
 	github.com/o1egl/paseto v1.0.0
 	github.com/spf13/viper v1.11.0
 	github.com/stretchr/testify v1.7.1
 	golang.org/x/crypto v0.0.0-20220427172511-eb4f295cb31f
-	google.golang.org/grpc v1.45.0
+	google.golang.org/grpc v1.46.2
+	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.2.0
 	google.golang.org/protobuf v1.28.0
 )
 
@@ -26,6 +28,7 @@ require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
+	github.com/golang/glog v1.0.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
@@ -48,8 +51,9 @@ require (
 	golang.org/x/net v0.0.0-20220412020605-290c469a71a5 // indirect
 	golang.org/x/sys v0.0.0-20220422013727-9388b58f7150 // indirect
 	golang.org/x/text v0.3.7 // indirect
-	google.golang.org/genproto v0.0.0-20220407144326-9054f6ed7bac // indirect
+	google.golang.org/genproto v0.0.0-20220519153652-3a47de7e79bd // indirect
 	gopkg.in/ini.v1 v1.66.4 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
+	sigs.k8s.io/yaml v1.3.0 // indirect
 )

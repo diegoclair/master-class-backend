@@ -54,6 +54,7 @@ proto:
 	rm -f pb/*.go
 	protoc --proto_path=proto/protodefs --go_out=proto/pb --go_opt=paths=source_relative \
     --go-grpc_out=proto/pb --go-grpc_opt=paths=source_relative \
+	--grpc-gateway_out=proto/pb --grpc-gateway_opt paths=source_relative \
     proto/protodefs/*.proto
 
 evans:

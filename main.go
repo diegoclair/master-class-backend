@@ -1,18 +1,22 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"log"
 	"net"
+	"net/http"
 
 	"github.com/diegoclair/master-class-backend/api"
 	db "github.com/diegoclair/master-class-backend/db/sqlc"
 	"github.com/diegoclair/master-class-backend/gapi"
 	"github.com/diegoclair/master-class-backend/proto/pb"
 	"github.com/diegoclair/master-class-backend/util"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 func main() {
@@ -28,9 +32,11 @@ func main() {
 	}
 
 	store := db.NewStore(conn)
+	go runGrpcGatewayServer(cfg, store)
 	runGrpcServer(cfg, store)
 
 }
+
 func runGrpcServer(cfg util.Config, store db.Store) {
 	server, err := gapi.NewServer(cfg, store)
 	if err != nil {
@@ -53,6 +59,49 @@ func runGrpcServer(cfg util.Config, store db.Store) {
 	}
 
 }
+
+func runGrpcGatewayServer(cfg util.Config, store db.Store) {
+	server, err := gapi.NewServer(cfg, store)
+	if err != nil {
+		log.Fatal("cannot create http grpc gateway server: ", err)
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	//this options are used to generate the json response with same name defined in protobuf file
+	//here is the link of documentation https://grpc-ecosystem.github.io/grpc-gateway/docs/mapping/customizing_your_gateway/
+	jsonOptions := runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
+		MarshalOptions: protojson.MarshalOptions{
+			UseProtoNames: true,
+		},
+		UnmarshalOptions: protojson.UnmarshalOptions{
+			DiscardUnknown: true,
+		},
+	})
+
+	grpcMux := runtime.NewServeMux(jsonOptions)
+	err = pb.RegisterSimpleBankHandlerServer(ctx, grpcMux, server)
+	if err != nil {
+		log.Fatal("cannot register http grpc gateway handler server: ", err)
+	}
+
+	mux := http.NewServeMux()
+	mux.Handle("/", grpcMux)
+
+	listener, err := net.Listen("tcp", cfg.HTTPServerAddress)
+	if err != nil {
+		log.Fatal("cannot create http grpc gateway listener: ", err)
+	}
+
+	log.Printf("Start http gRPC gateway server at %s", listener.Addr().String())
+	err = http.Serve(listener, mux)
+	if err != nil {
+		log.Fatal("cannot start http grpc gateway server: ", err)
+	}
+
+}
+
 func runGinServer(cfg util.Config, store db.Store) {
 	server, err := api.NewServer(cfg, store)
 	if err != nil {
