@@ -71,12 +71,14 @@ func (s *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (*pb.L
 		return nil, status.Errorf(codes.Internal, "error to create refrest token: %s", err)
 	}
 
+	metadata := s.extractMetadata(ctx)
+
 	session, err := s.store.CreateSession(ctx, db.CreateSessionParams{
 		ID:           refreshPayload.ID,
 		Username:     user.Username,
 		RefreshToken: refreshToken,
-		UserAgent:    "",
-		ClientID:     "",
+		UserAgent:    metadata.UserAgent,
+		ClientID:     metadata.ClientIP,
 		IsBlocked:    false,
 		ExpiresAt:    refreshPayload.ExpiredAt,
 	})
