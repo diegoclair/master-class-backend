@@ -52,9 +52,11 @@ test:
 
 proto:
 	rm -f pb/*.go
+	rm -f docs/*.swagger.json
 	protoc --proto_path=proto/protodefs --go_out=proto/pb --go_opt=paths=source_relative \
     --go-grpc_out=proto/pb --go-grpc_opt=paths=source_relative \
 	--grpc-gateway_out=proto/pb --grpc-gateway_opt paths=source_relative \
+	--openapiv2_out=docs --openapiv2_opt=allow_merge=true,merge_file_name=simple_bank \
     proto/protodefs/*.proto
 
 evans:

@@ -89,6 +89,11 @@ func runGrpcGatewayServer(cfg util.Config, store db.Store) {
 	mux := http.NewServeMux()
 	mux.Handle("/", grpcMux)
 
+	//the files that are inside of ./docs/swagger we got from https://github.com/swagger-api/swagger-ui inside of dist folder
+	//we need to modify the line 6 (url) of file swagger-initializer.js inside of docs/swagger to read our file (simple_bank.swagger.json)
+	fs := http.FileServer(http.Dir("./docs/swagger"))
+	mux.Handle("/swagger/", http.StripPrefix("/swagger/", fs))
+
 	listener, err := net.Listen("tcp", cfg.HTTPServerAddress)
 	if err != nil {
 		log.Fatal("cannot create http grpc gateway listener: ", err)

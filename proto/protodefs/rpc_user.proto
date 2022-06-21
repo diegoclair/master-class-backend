@@ -6,7 +6,6 @@ package pb;
 /*
     we add to our vscode settings.json the following lines: (we can add more --proto_path folders)
      "protoc": {
-        
         "options": [
             "--proto_path=proto/protodefs"
         ]
@@ -16,8 +15,21 @@ import "google/api/annotations.proto";
 
 import "user.proto";
 import "google/protobuf/timestamp.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
 
 option go_package = "github.com/diegoclair/master-class-backend/proto/pb";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+	info: {
+		title: "Simple Bank API";
+		version: "1.0";
+		contact: {
+			name: "Diego Clair";
+			url: "https://github.com/diegoclair";
+			email: "diego93rodrigues@gmail.com";
+		};
+	};
+};
 
 message CreateUserRequest {
     string username = 1;
